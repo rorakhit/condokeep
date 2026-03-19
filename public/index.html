@@ -82,6 +82,33 @@
       letter-spacing: 0.5px;
     }
 
+    /* View tabs */
+    .view-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      width: fit-content;
+    }
+
+    .view-tab {
+      padding: 8px 20px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active { background: var(--accent); color: white; }
+
     .filters {
       display: flex;
       gap: 8px;
@@ -145,6 +172,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .task-badge {
@@ -187,6 +215,7 @@
     .action-btn:hover { border-color: var(--accent); color: var(--accent); }
     .action-btn.complete:hover { border-color: var(--success); color: var(--success); }
     .action-btn.snooze:hover { border-color: var(--warning); color: var(--warning); }
+    .action-btn.delete:hover { border-color: var(--danger); color: var(--danger); }
 
     .modal-overlay {
       position: fixed;
@@ -213,6 +242,16 @@
     .modal h2 { font-size: 20px; margin-bottom: 8px; }
     .modal p { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
 
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .modal-header h2 { margin-bottom: 0; }
+
     .tip-box {
       background: rgba(99,102,241,0.08);
       border: 1px solid rgba(99,102,241,0.2);
@@ -230,6 +269,7 @@
       display: flex;
       gap: 10px;
       justify-content: flex-end;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -250,6 +290,9 @@
     .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
     .btn-warning { background: var(--warning); color: #000; }
     .btn-warning:hover { background: #d97706; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-sm { padding: 6px 14px; font-size: 12px; }
 
     textarea {
       width: 100%;
@@ -303,6 +346,109 @@
       font-size: 16px;
     }
 
+    /* Guide cards */
+    .guide-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.15s;
+    }
+
+    .guide-card:hover { border-color: #3a3d4a; }
+
+    .guide-card-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .guide-card-header:hover { background: var(--surface-hover); }
+
+    .guide-expand {
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .guide-expand.open { transform: rotate(90deg); }
+
+    .guide-card-body {
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .guide-description {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+
+    .guide-steps {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .guide-steps h4 {
+      font-size: 13px;
+      color: var(--accent-hover);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .guide-steps p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .guide-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .guide-freq {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      background: rgba(99,102,241,0.12);
+      color: var(--accent-hover);
+    }
+
+    /* Confirm delete overlay */
+    .confirm-bar {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .confirm-bar span {
+      font-size: 13px;
+      color: var(--danger);
+    }
+
+    .confirm-bar-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 640px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
       .task-card { flex-wrap: wrap; }
@@ -325,11 +471,12 @@
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': method === 'PATCH' ? 'return=representation' : 'return=representation'
+        'Prefer': 'return=representation'
       };
       const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
       if (!res.ok) throw new Error(`API error: ${res.status}`);
-      return res.json();
+      const text = await res.text();
+      return text ? JSON.parse(text) : [];
     }
 
     function daysUntil(dateStr) {
@@ -344,6 +491,14 @@
       return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
+    function freqLabel(days) {
+      if (days <= 14) return 'Every ' + days + ' days';
+      if (days < 60) return 'Monthly';
+      if (days < 120) return 'Every ' + Math.round(days / 30) + ' months';
+      if (days < 300) return 'Every ' + Math.round(days / 30) + ' months';
+      return 'Yearly';
+    }
+
     function getStatus(task) {
       if (task.status === 'completed') return 'completed';
       if (task.status === 'snoozed') return 'snoozed';
@@ -356,7 +511,7 @@
     function getDueText(task) {
       const status = getStatus(task);
       if (status === 'completed') return `Done ${task.completed_at ? new Date(task.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}`;
-      if (status === 'snoozed') return `Snoozed → ${formatDate(task.snoozed_until)}`;
+      if (status === 'snoozed') return `Snoozed to ${formatDate(task.snoozed_until)}`;
       const days = daysUntil(task.due_date);
       if (days < 0) return `${Math.abs(days)} day${Math.abs(days) > 1 ? 's' : ''} overdue`;
       if (days === 0) return 'Due today';
@@ -374,26 +529,87 @@
       );
     }
 
+    function GuideCard({ template, catIcon, catColor, onRemove }) {
+      const [open, setOpen] = useState(false);
+      const [confirmDelete, setConfirmDelete] = useState(false);
+
+      return (
+        <div className="guide-card">
+          <div className="guide-card-header" onClick={() => setOpen(!open)}>
+            <div className="task-icon" style={{ background: catColor + '18', color: catColor }}>
+              {catIcon}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div className="task-name">{template.name}</div>
+              <div className="task-meta">
+                <span className="guide-freq">{freqLabel(template.frequency_days)}</span>
+                {template.estimated_minutes && <span>{template.estimated_minutes} min</span>}
+                {template.difficulty && <Difficulty level={template.difficulty} />}
+              </div>
+            </div>
+            <span className={`guide-expand ${open ? 'open' : ''}`}>&#9654;</span>
+          </div>
+          {open && (
+            <div className="guide-card-body">
+              <p className="guide-description">{template.description}</p>
+              {template.tips && (
+                <div className="guide-steps">
+                  <h4>How to do it</h4>
+                  <p>{template.tips}</p>
+                </div>
+              )}
+              <div className="guide-meta">
+                <span>Every {template.frequency_days} days</span>
+                <span>&middot;</span>
+                <span>{template.difficulty} difficulty</span>
+                {template.estimated_minutes && <><span>&middot;</span><span>~{template.estimated_minutes} min</span></>}
+              </div>
+              {!confirmDelete ? (
+                <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-ghost btn-sm" style={{ color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.3)' }}
+                    onClick={() => setConfirmDelete(true)}>
+                    Remove this chore
+                  </button>
+                </div>
+              ) : (
+                <div className="confirm-bar" style={{ marginTop: 16 }}>
+                  <span>Remove "{template.name}" permanently? All scheduled instances will be deleted.</span>
+                  <div className="confirm-bar-actions">
+                    <button className="btn btn-ghost btn-sm" onClick={() => setConfirmDelete(false)}>Cancel</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => onRemove(template.id)}>Remove</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     function App() {
       const [tasks, setTasks] = useState([]);
       const [categories, setCategories] = useState([]);
       const [templates, setTemplates] = useState([]);
       const [loading, setLoading] = useState(true);
+      const [view, setView] = useState('tasks'); // 'tasks' or 'guide'
       const [filter, setFilter] = useState('active');
       const [categoryFilter, setCategoryFilter] = useState('all');
       const [selectedTask, setSelectedTask] = useState(null);
       const [notes, setNotes] = useState('');
+      const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
       async function loadData() {
         try {
           const [cats, tmpls, instances] = await Promise.all([
             supaFetch('categories'),
-            supaFetch('task_templates'),
+            supaFetch('task_templates', { filters: 'is_active=eq.true' }),
             supaFetch('task_instances', { select: '*,template:task_templates(*,category:categories(*))' })
           ]);
           setCategories(cats);
           setTemplates(tmpls);
-          setTasks(instances.sort((a, b) => {
+          // Filter out instances whose template was deleted
+          const activeInstances = instances.filter(i => i.template !== null);
+          setTasks(activeInstances.sort((a, b) => {
             const sa = getStatus(a), sb = getStatus(b);
             const order = { overdue: 0, due: 1, upcoming: 2, snoozed: 3, completed: 4 };
             if (order[sa] !== order[sb]) return order[sa] - order[sb];
@@ -409,12 +625,11 @@
 
       async function completeTask(task) {
         const now = new Date().toISOString();
-        await supaFetch(`task_instances`, {
+        await supaFetch('task_instances', {
           method: 'PATCH',
           filters: `id=eq.${task.id}`,
           body: { status: 'completed', completed_at: now, notes: notes || null }
         });
-        // Create next occurrence
         const freq = task.template?.frequency_days || 30;
         const nextDue = new Date();
         nextDue.setDate(nextDue.getDate() + freq);
@@ -434,7 +649,7 @@
       async function snoozeTask(task, days = 7) {
         const snoozeDate = new Date();
         snoozeDate.setDate(snoozeDate.getDate() + days);
-        await supaFetch(`task_instances`, {
+        await supaFetch('task_instances', {
           method: 'PATCH',
           filters: `id=eq.${task.id}`,
           body: { status: 'snoozed', snoozed_until: snoozeDate.toISOString().split('T')[0], due_date: snoozeDate.toISOString().split('T')[0] }
@@ -443,16 +658,39 @@
         loadData();
       }
 
+      async function removeTemplate(templateId) {
+        // Delete all instances for this template first, then the template
+        await supaFetch('task_instances', {
+          method: 'DELETE',
+          filters: `template_id=eq.${templateId}`
+        });
+        await supaFetch('task_templates', {
+          method: 'DELETE',
+          filters: `id=eq.${templateId}`
+        });
+        setSelectedTask(null);
+        setConfirmDeleteId(null);
+        loadData();
+      }
+
       const filtered = useMemo(() => {
         return tasks.filter(t => {
           const status = getStatus(t);
-          if (filter === 'active' && (status === 'completed')) return false;
+          if (filter === 'active' && status === 'completed') return false;
           if (filter === 'overdue' && status !== 'overdue') return false;
           if (filter === 'completed' && status !== 'completed') return false;
           if (categoryFilter !== 'all' && t.template?.category?.name !== categoryFilter) return false;
           return true;
         });
       }, [tasks, filter, categoryFilter]);
+
+      const filteredTemplates = useMemo(() => {
+        if (categoryFilter === 'all') return templates;
+        return templates.filter(t => {
+          const cat = categories.find(c => c.id === t.category_id);
+          return cat && cat.name === categoryFilter;
+        });
+      }, [templates, categoryFilter, categories]);
 
       const counts = useMemo(() => {
         const c = { overdue: 0, due: 0, upcoming: 0, completed: 0 };
@@ -462,6 +700,11 @@
 
       const categoryColors = { 'Appliance Maintenance': '#3B82F6', 'Deep Cleaning': '#8B5CF6', 'Seasonal Prep': '#F59E0B' };
       const categoryIcons = { 'Appliance Maintenance': '🔧', 'Deep Cleaning': '✨', 'Seasonal Prep': '🌡️' };
+
+      function getCatForTemplate(t) {
+        const cat = categories.find(c => c.id === t.category_id);
+        return cat ? cat.name : '';
+      }
 
       if (loading) return <div className="app"><div className="loading">Loading CondoKeep...</div></div>;
 
@@ -474,27 +717,36 @@
             </span>
           </div>
 
-          <div className="stats">
-            <div className="stat-card">
-              <div className="stat-number" style={{ color: 'var(--danger)' }}>{counts.overdue}</div>
-              <div className="stat-label">Overdue</div>
+          {view === 'tasks' && (
+            <div className="stats">
+              <div className="stat-card">
+                <div className="stat-number" style={{ color: 'var(--danger)' }}>{counts.overdue}</div>
+                <div className="stat-label">Overdue</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{ color: 'var(--warning)' }}>{counts.due}</div>
+                <div className="stat-label">Due Soon</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{ color: 'var(--accent-hover)' }}>{counts.upcoming}</div>
+                <div className="stat-label">Upcoming</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{ color: 'var(--success)' }}>{counts.completed}</div>
+                <div className="stat-label">Completed</div>
+              </div>
             </div>
-            <div className="stat-card">
-              <div className="stat-number" style={{ color: 'var(--warning)' }}>{counts.due}</div>
-              <div className="stat-label">Due Soon</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number" style={{ color: 'var(--accent-hover)' }}>{counts.upcoming}</div>
-              <div className="stat-label">Upcoming</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number" style={{ color: 'var(--success)' }}>{counts.completed}</div>
-              <div className="stat-label">Completed</div>
-            </div>
+          )}
+
+          <div className="view-tabs">
+            <button className={`view-tab ${view === 'tasks' ? 'active' : ''}`}
+              onClick={() => setView('tasks')}>My Tasks</button>
+            <button className={`view-tab ${view === 'guide' ? 'active' : ''}`}
+              onClick={() => setView('guide')}>How-To Guide</button>
           </div>
 
           <div className="filters">
-            {[
+            {view === 'tasks' && [
               ['active', 'Active'],
               ['overdue', 'Overdue'],
               ['completed', 'Completed'],
@@ -502,7 +754,9 @@
               <button key={key} className={`filter-btn ${filter === key ? 'active' : ''}`}
                 onClick={() => setFilter(key)}>{label}</button>
             ))}
-            <span style={{ width: 1, background: 'var(--border)', margin: '0 4px' }}></span>
+            {view === 'tasks' && (
+              <span style={{ width: 1, background: 'var(--border)', margin: '0 4px' }}></span>
+            )}
             {['all', ...categories.map(c => c.name)].map(name => (
               <button key={name} className={`filter-btn ${categoryFilter === name ? 'active' : ''}`}
                 onClick={() => setCategoryFilter(name)}>
@@ -511,78 +765,137 @@
             ))}
           </div>
 
-          <div className="task-list">
-            {filtered.length === 0 ? (
-              <div className="empty-state">
-                <div className="emoji">{filter === 'overdue' ? '🎉' : '📋'}</div>
-                <p>{filter === 'overdue' ? 'Nothing overdue! Nice work.' : 'No tasks to show.'}</p>
-              </div>
-            ) : filtered.map(task => {
-              const status = getStatus(task);
-              const catName = task.template?.category?.name || '';
-              const color = categoryColors[catName] || '#6366f1';
-              return (
-                <div key={task.id} className={`task-card ${status === 'completed' ? 'completed' : ''}`}
-                  onClick={() => { setSelectedTask(task); setNotes(''); }}>
-                  <div className="task-icon" style={{ background: color + '18', color }}>
-                    {categoryIcons[catName] || '📋'}
-                  </div>
-                  <div className="task-content">
-                    <div className="task-name">{task.template?.name || 'Task'}</div>
-                    <div className="task-meta">
-                      <span>{getDueText(task)}</span>
-                      <span>·</span>
-                      <span>{formatDate(task.due_date)}</span>
-                      {task.template?.estimated_minutes && (
-                        <><span>·</span><span>{task.template.estimated_minutes} min</span></>
-                      )}
-                      {task.template?.difficulty && (
-                        <><span>·</span><Difficulty level={task.template.difficulty} /></>
-                      )}
-                    </div>
-                  </div>
-                  <span className={`task-badge badge-${status}`}>{status}</span>
-                  {status !== 'completed' && (
-                    <div className="task-actions" onClick={e => e.stopPropagation()}>
-                      <button className="action-btn complete" title="Mark complete"
-                        onClick={() => { setSelectedTask(task); setNotes(''); }}>✓</button>
-                      <button className="action-btn snooze" title="Snooze 7 days"
-                        onClick={() => snoozeTask(task, 7)}>⏰</button>
-                    </div>
-                  )}
+          {/* TASKS VIEW */}
+          {view === 'tasks' && (
+            <div className="task-list">
+              {filtered.length === 0 ? (
+                <div className="empty-state">
+                  <div className="emoji">{filter === 'overdue' ? '🎉' : '📋'}</div>
+                  <p>{filter === 'overdue' ? 'Nothing overdue! Nice work.' : 'No tasks to show.'}</p>
                 </div>
-              );
-            })}
-          </div>
+              ) : filtered.map(task => {
+                const status = getStatus(task);
+                const catName = task.template?.category?.name || '';
+                const color = categoryColors[catName] || '#6366f1';
+                return (
+                  <div key={task.id} className={`task-card ${status === 'completed' ? 'completed' : ''}`}
+                    onClick={() => { setSelectedTask(task); setNotes(''); setConfirmDeleteId(null); }}>
+                    <div className="task-icon" style={{ background: color + '18', color }}>
+                      {categoryIcons[catName] || '📋'}
+                    </div>
+                    <div className="task-content">
+                      <div className="task-name">{task.template?.name || 'Task'}</div>
+                      <div className="task-meta">
+                        <span>{getDueText(task)}</span>
+                        <span>&middot;</span>
+                        <span>{formatDate(task.due_date)}</span>
+                        {task.template?.estimated_minutes && (
+                          <><span>&middot;</span><span>{task.template.estimated_minutes} min</span></>
+                        )}
+                        {task.template?.difficulty && (
+                          <><span>&middot;</span><Difficulty level={task.template.difficulty} /></>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`task-badge badge-${status}`}>{status}</span>
+                    {status !== 'completed' && (
+                      <div className="task-actions" onClick={e => e.stopPropagation()}>
+                        <button className="action-btn complete" title="Mark complete"
+                          onClick={() => { setSelectedTask(task); setNotes(''); setConfirmDeleteId(null); }}>&#10003;</button>
+                        <button className="action-btn snooze" title="Snooze 7 days"
+                          onClick={() => snoozeTask(task, 7)}>&#9200;</button>
+                        <button className="action-btn delete" title="Remove this chore"
+                          onClick={() => { setSelectedTask(task); setConfirmDeleteId(task.template_id); setNotes(''); }}>&#10005;</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
+          {/* HOW-TO GUIDE VIEW */}
+          {view === 'guide' && (
+            <div className="task-list">
+              {filteredTemplates.length === 0 ? (
+                <div className="empty-state">
+                  <div className="emoji">📖</div>
+                  <p>No guides to show for this category.</p>
+                </div>
+              ) : filteredTemplates.map(tmpl => {
+                const catName = getCatForTemplate(tmpl);
+                return (
+                  <GuideCard
+                    key={tmpl.id}
+                    template={tmpl}
+                    catIcon={categoryIcons[catName] || '📋'}
+                    catColor={categoryColors[catName] || '#6366f1'}
+                    onRemove={removeTemplate}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* TASK DETAIL MODAL */}
           {selectedTask && (
-            <div className="modal-overlay" onClick={() => setSelectedTask(null)}>
+            <div className="modal-overlay" onClick={() => { setSelectedTask(null); setConfirmDeleteId(null); }}>
               <div className="modal" onClick={e => e.stopPropagation()}>
-                <h2>{selectedTask.template?.name}</h2>
+                <div className="modal-header">
+                  <h2>{selectedTask.template?.name}</h2>
+                  <span className="task-badge" style={{ marginTop: 4, background: categoryColors[selectedTask.template?.category?.name] + '18', color: categoryColors[selectedTask.template?.category?.name] }}>
+                    {selectedTask.template?.category?.name}
+                  </span>
+                </div>
                 <p>{selectedTask.template?.description}</p>
+
                 {selectedTask.template?.tips && (
                   <div className="tip-box">
-                    <strong>💡 Tip:</strong> {selectedTask.template.tips}
+                    <strong>Step-by-step instructions:</strong><br /><br />
+                    {selectedTask.template.tips}
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: 16, marginBottom: 20, fontSize: 13, color: 'var(--text-muted)' }}>
+
+                <div style={{ display: 'flex', gap: 16, marginBottom: 20, fontSize: 13, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
                   <span>📅 {formatDate(selectedTask.due_date)}</span>
                   {selectedTask.template?.estimated_minutes && <span>⏱ {selectedTask.template.estimated_minutes} min</span>}
                   {selectedTask.template?.difficulty && <span>Difficulty: {selectedTask.template.difficulty}</span>}
+                  {selectedTask.template?.frequency_days && <span>🔄 {freqLabel(selectedTask.template.frequency_days)}</span>}
                 </div>
-                {getStatus(selectedTask) !== 'completed' && (
+
+                {/* Confirm delete bar */}
+                {confirmDeleteId === selectedTask.template_id && (
+                  <div className="confirm-bar">
+                    <span>Remove this chore permanently? It won't come back.</span>
+                    <div className="confirm-bar-actions">
+                      <button className="btn btn-ghost btn-sm" onClick={() => setConfirmDeleteId(null)}>Cancel</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => removeTemplate(selectedTask.template_id)}>Remove</button>
+                    </div>
+                  </div>
+                )}
+
+                {getStatus(selectedTask) !== 'completed' && !confirmDeleteId && (
                   <>
                     <textarea placeholder="Add notes (optional)..." value={notes}
                       onChange={e => setNotes(e.target.value)} />
                     <div className="modal-actions">
+                      <button className="btn btn-ghost btn-sm" style={{ color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.3)', marginRight: 'auto' }}
+                        onClick={() => setConfirmDeleteId(selectedTask.template_id)}>
+                        Remove chore
+                      </button>
                       <button className="btn btn-ghost" onClick={() => setSelectedTask(null)}>Cancel</button>
                       <button className="btn btn-warning" onClick={() => snoozeTask(selectedTask, 7)}>Snooze 7d</button>
-                      <button className="btn btn-success" onClick={() => completeTask(selectedTask)}>✓ Complete</button>
+                      <button className="btn btn-success" onClick={() => completeTask(selectedTask)}>&#10003; Complete</button>
                     </div>
                   </>
                 )}
                 {getStatus(selectedTask) === 'completed' && (
                   <div className="modal-actions">
+                    {selectedTask.notes && (
+                      <div style={{ flex: 1, fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                        Note: {selectedTask.notes}
+                      </div>
+                    )}
                     <button className="btn btn-ghost" onClick={() => setSelectedTask(null)}>Close</button>
                   </div>
                 )}
